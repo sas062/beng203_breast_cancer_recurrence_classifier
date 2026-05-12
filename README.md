@@ -1,4 +1,4 @@
-# breast_cancer_recurrence_classifier
+# Classification for recurrent and non-recurrent breast cancer patients
 
 Our breast cancer study published on [PNAS](https://www.pnas.org/content/116/38/19200) indicated potential application of SILVER-Seq on breast cancer and identified some promising breast cancer related diagnostic panels, for cancer and recurrence prediction. To develop and further validate the model, we've collected serum samples from PNAS paper and 2 additional sources and processed the samples with SILVER-Seq (as shown below). 
 
