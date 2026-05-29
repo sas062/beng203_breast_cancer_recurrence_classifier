@@ -2,9 +2,11 @@ import pandas as pd
 
 def main():
     pnas_normal_readcounts = pd.read_csv('data/reads/pnas_normal_tpm.txt', sep='\t')
-    pnas_readcounts_96 = pd.read_csv('data/reads/pnas_tpm_96_nodup.txt', sep='\t')
+    pnas_readcounts_96 = pd.read_csv('data/reads/pnas_tpm_96_nodup.txt', sep='\t', header=None)
 
-    pnas_normal_readcounts = pnas_normal_readcounts.iloc[1:, :]
+    #pnas_readcounts_96.columns = []
+
+    #pnas_normal_readcounts = pnas_normal_readcounts.iloc[1:, :]
     # print(pnas_normal_readcounts.columns.tolist())
     # print(pnas_normal_readcounts.iloc[:5, :3])
     # pnas_normal_readcounts = pnas_normal_readcounts.set_index(pnas_normal_readcounts.columns[0])
@@ -24,10 +26,10 @@ def main():
 
     print(len(data), n_normal + n_cancer)
 
-    # data["cancer_status"] = [0] * n_normal + [1] * n_cancer
-    # data["sample_id"] = range(1, len(data) + 1)
+    data["cancer_status"] = [0] * n_normal + [1] * n_cancer
 
-    print(data.head())
+    print(data)
+    print(data.shape)
 
 if __name__ == "__main__":
     main()
