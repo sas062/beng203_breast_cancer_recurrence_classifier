@@ -76,7 +76,7 @@ def load_recurrence_data(expression_threshold=0.1, min_sample_fraction=0.20):
     }
 
 def load_validation_rec_data(
-    tpm_path="data/reads/validation_exon_tpm.txt",
+    tpm_path="data/reads/validation_exon_tpm",
     meta_path="data/validation_bc_meta.xlsx",
     train_expression_features=None,
 ):
