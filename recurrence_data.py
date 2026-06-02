@@ -181,6 +181,8 @@ if __name__ == "__main__":
     print(f"Total columns: {data.shape[1]}")
     print(f"Expression features after filtering: {len(recurrence_data['expression_features'])}")
     print(f"Encoded clinical features: {len(recurrence_data['encoded_clinical_features'])}")
+    for col in recurrence_data["encoded_clinical_features"]:
+        print(f" - {col}")
     print("Label counts:")
     print(y.value_counts().rename(index={0: "N", 1: "R"}))
     print(f"Unique donors: {groups.nunique()}")
