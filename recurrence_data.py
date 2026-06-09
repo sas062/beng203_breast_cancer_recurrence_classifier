@@ -79,9 +79,8 @@ def load_validation_rec_data(
     tpm_path="data/reads/validation_exon_tpm",
     meta_path="data/validation_bc_meta.xlsx",
     train_expression_features=None,
+    verbose=False,
 ):
-    import pandas as pd
-
     target_column = "recurrence_status"
     sample_id_column = "Mapping ID"
     label_column = "Recurrence Staus at the time of collection"
@@ -90,17 +89,12 @@ def load_validation_rec_data(
         raise ValueError("train_expression_features must be provided.")
 
     val_tpm = pd.read_csv(tpm_path, sep="\t")
-    print("Raw validation TPM shape:", val_tpm.shape)
-    print("First 5 raw validation columns:", val_tpm.columns[:5].tolist())
 
-    val_expression = val_tpm.set_index(val_tpm.columns[0]).T
-    val_expression.index = val_expression.index.astype(str)
+    val_expression = val_tpm.T
+    val_expression.index = val_expression.index.astype(str).str.strip()
     val_expression.index.name = sample_id_column
     val_expression.columns = val_expression.columns.astype(str).str.strip()
     val_expression = val_expression.apply(pd.to_numeric, errors="coerce")
-
-    print("Validation expression shape after transpose:", val_expression.shape)
-    print("First 10 validation feature columns:", val_expression.columns[:10].tolist())
 
     if meta_path.lower().endswith((".xlsx", ".xls")):
         val_meta = pd.read_excel(meta_path)
@@ -115,7 +109,6 @@ def load_validation_rec_data(
     val_meta[sample_id_column] = val_meta[sample_id_column].astype(str).str.strip()
 
     shared_samples = [sid for sid in val_meta[sample_id_column] if sid in val_expression.index]
-    print("Shared samples:", len(shared_samples))
 
     if not shared_samples:
         raise ValueError("No overlapping sample IDs between validation TPM and metadata.")
@@ -128,8 +121,6 @@ def load_validation_rec_data(
     label_map = {
         "Nonrecurrent": 0,
         "Recurrent": 1,
-        "Non-Recurrent": 0,
-        "Recurrent ": 1,
     }
     val_meta[target_column] = val_meta[label_column].astype(str).str.strip().map(label_map)
 
@@ -146,11 +137,6 @@ def load_validation_rec_data(
         f for f in train_expression_features if f not in val_expression.columns
     ]
 
-    print("Training features:", len(train_expression_features))
-    print("Validation parsed features:", len(val_expression.columns))
-    print("Common features:", len(common_expression_features))
-    print("First 10 common features:", common_expression_features[:10])
-
     if not common_expression_features:
         raise ValueError(
             "No overlapping expression features between training and validation data."
@@ -158,6 +144,15 @@ def load_validation_rec_data(
 
     X = val_expression.reindex(columns=train_expression_features, fill_value=0.0)
     y = val_meta[target_column].astype(int)
+
+    if verbose:
+        print("Raw validation TPM shape:", val_tpm.shape)
+        print("Validation expression shape after transpose:", val_expression.shape)
+        print("Shared samples:", len(shared_samples))
+        print("Training features:", len(train_expression_features))
+        print("Validation parsed features:", len(val_expression.columns))
+        print("Common features:", len(common_expression_features))
+        print("First 10 common features:", common_expression_features[:10])
 
     return {
         "X": X,
